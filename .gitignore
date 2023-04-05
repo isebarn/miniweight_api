@@ -1,3 +1,6 @@
 schema.txt
 options.json
 generate.py
+*.pyc
+*.js
+*.json

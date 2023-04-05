@@ -8,6 +8,7 @@ from flask import request
 # Local application imports
 from endpoints import Resource
 
+
 def dispatch_request(self, *args, **kwargs):
     # data = decode(
     #     request.headers.get("AccessToken"),

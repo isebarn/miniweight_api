@@ -35,6 +35,8 @@ black = "*"
 pyhumps = "*"
 requests = "*"
 openai = "*"
+blinker = "*"
+pandas = "*"
 
 [dev-packages]
 

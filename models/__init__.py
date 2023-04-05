@@ -36,7 +36,8 @@ from flask_restx.fields import String
 from flask_restx.fields import Boolean
 from flask_restx.fields import Raw
 
-from models.query_sets import LayoutQuerySet
+from models.query_sets import FormQuerySet
+
 ## EXTRA
 
 
@@ -313,7 +314,6 @@ class Extended(Document, Base):
     @classmethod
     def get(cls, *args, **kwargs):
         def recursively_query(model, fields, search, root=False):
-
             if fields == "id__in":
                 return {fields: search}
 
@@ -340,7 +340,6 @@ class Extended(Document, Base):
 
         filters = {}
         for query, search in kwargs.items():
-
             if query.startswith("$"):
                 continue
 
@@ -447,30 +446,42 @@ class Extended(Document, Base):
 class EmbeddedDocument(_EmbeddedDocument, Base):
     meta = {"abstract": True, "allow_inheritance": True}
 
-class Layout(Extended):
-    meta = {'queryset_class': LayoutQuerySet}
 
-    name = StringField()
-    structure = DictField()
+class DailyMeal(EmbeddedDocument):
+    breakfast = StringField()
+    snack1 = StringField()
+    lunch = StringField()
+    snack2 = StringField()
+    dinner = StringField()
 
+
+class Form(Extended):
+    meta = {"queryset_class": FormQuerySet}
+
+    gender = StringField()
+    age = IntField()
+    height = IntField()
+    weight = IntField()
+    target_weight = IntField()
+    meals = EmbeddedDocumentListField(DailyMeal)
 
 
 # def config():
-    # signals.pre_save.connect(Class.pre_save, sender=Class)
-    # signals.post_save.connect(Class.post_save, sender=Class)
+# signals.pre_save.connect(Class.pre_save, sender=Class)
+# signals.post_save.connect(Class.post_save, sender=Class)
 
-    # seed
-    # logging.info("Seeding database")
-    # seed = load(open("models/seed.json"))
+# seed
+# logging.info("Seeding database")
+# seed = load(open("models/seed.json"))
 
-    # helper method to remove "_id" and "_cls" so I can compare json objects
-    # from the db
-    # def remove_meta_from_dict_item(item):
-    #     item.pop("_cls")
-    #     item.pop("_id")
-    #     for key, value in item.items():
-    #         if isinstance(value, dict):
-    #             remove_meta_from_dict_item(value)
+# helper method to remove "_id" and "_cls" so I can compare json objects
+# from the db
+# def remove_meta_from_dict_item(item):
+#     item.pop("_cls")
+#     item.pop("_id")
+#     for key, value in item.items():
+#         if isinstance(value, dict):
+#             remove_meta_from_dict_item(value)
 
 
 # config()
