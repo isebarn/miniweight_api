@@ -67,7 +67,7 @@ def create_prompt(form):
 # init app
 app = Flask(__name__)
 
-# cors
+# CORS
 CORS(app)
 
 # database
