@@ -3,7 +3,7 @@ from mongoengine import signals
 from models import Form, DailyMeal
 from requests import post
 from flask import abort
-from pandas import read_csv
+from csv import reader
 from io import StringIO
 
 
@@ -16,23 +16,13 @@ def create_prompt(sender, document):
     csv = response.json()
     #csv = 'Monday|Oatmeal with banana and walnuts|Yogurt with granola|Turkey sandwich with lettuce and tomato|Carrot sticks and hummus|Grilled salmon with roasted vegetables|\n\nTuesday|Scrambled eggs with spinach and feta cheese|Berries and almonds|Salad with grilled chicken|Apple slices with peanut butter|Stir fry with tofu and vegetables|\n\nWednesday|Whole wheat toast with peanut butter and banana|String cheese and crackers|Veggie wrap with hummus|Celery sticks with cottage cheese|Grilled steak with roasted potatoes and broccoli|\n\nThursday|Smoothie with yogurt, banana, and berries|Trail mix with dried fruit and nuts|Grilled turkey burger on a whole wheat bun|Cucumber slices with Greek yogurt dip|Vegetable stir fry over brown rice|\n\nFriday|Oatmeal pancakes with fresh fruit|Yogurt parfait with granola and berries|Turkey wrap with lettuce, tomato, and avocado|Apple slices with almond butter|Baked salmon with quinoa and roasted vegetables|\n\nSaturday|Eggs Benedict on whole wheat toast|Cheese cubes and crackers|Greek salad with grilled chicken breast|Carrot sticks and hummus dip|Grilled shrimp with brown rice and steamed vegetables |\n\nSunday|Blueberry muffins and Greek yogurt |Trail mix with dried fruit and nuts |Veggie wrap with hummus |Celery sticks with cottage cheese |Chicken stir fry over brown rice'
 
-    samba = read_csv(StringIO(csv), sep="|", header=None)
+    samba = reader(StringIO(csv), delimiter="|")
 
-    # make the first column into the index
-    samba.set_index(0, inplace=True)
+    document.meals = []
+    for row in samba:
+        if not any(row): continue
+        data = {key: value for key, value in zip(["breakfast", "snack1", "lunch", "snack2", "dinner"], row)}
 
-    # drop last column
-    if len(samba.columns) == 6:
-        samba.drop(samba.columns[-1], axis=1, inplace=True)
-
-    # rename columns to day, breakfast, snack1, lunch, snack2, dinner
-    samba.columns = ["breakfast", "snack1", "lunch", "snack2", "dinner"]
-
-    # convert to dictionary
-    samba_dict = samba.to_dict(orient="index")
-    
-    meals = [DailyMeal(**x) for x in samba_dict.values()]
-
-    document.meals = meals
+        document.meals.append(DailyMeal(**data))
 
 signals.pre_save.connect(create_prompt, sender=Form)
