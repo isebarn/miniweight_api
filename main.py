@@ -62,7 +62,7 @@ def create_prompt(form):
 
         for row in samba:
             if not any(row): continue
-            data = {key: value for key, value in zip(["breakfast", "snack1", "lunch", "snack2", "dinner"], row)}
+            data = {key: value for key, value in zip(["day", "breakfast", "snack1", "lunch", "snack2", "dinner"], row)}
 
             meals.append(data)
 
