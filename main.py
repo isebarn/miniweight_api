@@ -52,6 +52,7 @@ def create_prompt(form):
         prompt = "Make me a meal plan based on the following. Height: {} , Weight: {}, Age: {}, Target Weight: {} ".format(form.height, form.weight, form.age, form.target_weight)
         prompt += "Make a weekly meal plan where each day has breakfast, snack, lunch, afternoon_snack and dinner. Return as a csv with a | separator instead of a comma."
         prompt += "Example row looks like this: Monday|eggs with tomato|apple|chicken salad|banana|steak and potatoes"
+        prompt += "Write it in French."
         
         response = open_ai(prompt)
         csv = response
